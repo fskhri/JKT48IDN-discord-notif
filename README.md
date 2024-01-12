@@ -22,3 +22,5 @@ channel_id= Your Channel
 tolong bantu berkontribusi project ini agar menjadi lebih bagus lagi
 
 JANGAN LUPA KASIH BINTANG!
+
+https%3A%2F%2Ftenor.com%2Fview%2Fgitajkt48-jkt48-gif-23247151&psig=AOvVaw29q86k2FSiBiMUDhiE1nnh&ust=1705139575494000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCNC7k4fK14MDFQAAAAAdAAAAABAJ
