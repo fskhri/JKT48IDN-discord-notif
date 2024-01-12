@@ -23,4 +23,4 @@ tolong bantu berkontribusi project ini agar menjadi lebih bagus lagi
 
 JANGAN LUPA KASIH BINTANG!
 
-![](https://media1.tenor.com/m/qsTvxmhFjmMAAAAd/gitajkt48-jkt48.gif)
+![GIF](https://media1.tenor.com/m/qsTvxmhFjmMAAAAd/gitajkt48-jkt48.gif)
