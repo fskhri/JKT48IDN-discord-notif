@@ -1,7 +1,8 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import requests
 import time
+from urllib.parse import quote
 
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
@@ -20,10 +21,31 @@ def get_livestream_data():
 # Dictionary untuk menyimpan pesan yang terakhir di-edit untuk setiap live stream
 last_messages = {}
 
+# Dictionary untuk menyimpan URL channel setiap anggota yang sedang livestream
+live_streams = {}
+
+# Pengecekan livestream selesai
+@tasks.loop(minutes=1)
+async def check_finished_streams():
+    livestream_data = get_livestream_data()
+
+    if 'data' in livestream_data and len(livestream_data['data']) > 0:
+        for livestream in livestream_data['data']:
+            if livestream['status'].lower() == 'ended':
+                member_name = livestream.get('creator', {}).get('name', 'Unknown')
+                channel_id = 1234567890  # Ganti dengan ID channel Discord Anda
+                channel = bot.get_channel(channel_id)
+                await channel.send(f"Terima kasih kepada {member_name} yang sudah menyelesaikan livestreamnya! Channel: {live_streams.get(member_name, 'N/A')}")
+                print(f"Notifikasi terkirim ke server atas nama {member_name}")
+
 # Fungsi yang dijalankan saat bot siap
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
+    await bot.change_presence(activity=discord.Game(name="Watching JKT48 Livestreams"))
+    
+    # Memulai pengecekan livestream selesai
+    check_finished_streams.start()
 
     # Loop utama
     while True:
@@ -40,7 +62,7 @@ async def livestream_notification():
 
 # Fungsi untuk mengirimkan notifikasi ke channel Discord dengan embed
 async def send_livestream_notification(livestream):
-    channel_id = 123456789  # Ganti dengan ID channel Discord Anda
+    channel_id = 1234567890  # Ganti dengan ID channel Discord Anda
 
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
@@ -48,9 +70,12 @@ async def send_livestream_notification(livestream):
     thumbnail_url = livestream.get('image_url', '')  # Ganti dengan field yang sesuai, bisa 'image_url' atau 'thumbnail_url'
     view_count = livestream.get('view_count', 0)
     status = livestream.get('status', 'Unknown')
-    creator_name = livestream.get('creator', {}).get('name', 'Unknown')
+    creator = livestream.get('creator', {})
+    creator_name = creator.get('name', 'Unknown')
+    username = creator.get('username', 'Unknown')  # Tambahan untuk username
     gift_icon_url = livestream.get('gift_icon_url', '')
     category_name = livestream.get('category', {}).get('name', 'Unknown')
+    slug = livestream.get('slug', '')  # Ganti dengan field yang sesuai
 
     # Buat objek embed
     embed = discord.Embed(
@@ -62,6 +87,11 @@ async def send_livestream_notification(livestream):
 
     # Tambahkan tombol untuk membuka playback dalam web player
     embed.add_field(name="Web Player", value=f"[Buka di Web Player]({playback_url})", inline=False)
+
+    # Tambahkan tombol untuk membuka channel
+    channel_url = f"https://www.idn.app/{username.lower().replace(' ', '')}/live/{slug}"
+    embed.add_field(name="Channel", value=f"[Buka Channel]({channel_url})", inline=True)
+
 
     # Tambahkan ikon hadiah (gift) jika tersedia
     if gift_icon_url:
@@ -82,6 +112,7 @@ async def send_livestream_notification(livestream):
     # Kirim pesan baru
     sent_message = await channel.send(embed=embed)
     last_messages[livestream['room_identifier']] = sent_message.id
+    print(f"Notifikasi terkirim, Member yang sedang stream: {creator_name}")
 
 # Menjalankan bot
 if __name__ == '__main__':
