@@ -7,6 +7,8 @@ from urllib.parse import quote
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
 
+CHANNEL_ID = 1234567890
+
 # Fungsi untuk mengambil data dari API
 def get_livestream_data():
     api_url = 'https://mobile-api.idntimes.com/v3/livestreams'
@@ -33,7 +35,7 @@ async def check_finished_streams():
         for livestream in livestream_data['data']:
             if livestream['status'].lower() == 'ended':
                 member_name = livestream.get('creator', {}).get('name', 'Unknown')
-                channel_id = 1234567890  # Ganti dengan ID channel Discord Anda
+                channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
                 channel = bot.get_channel(channel_id)
                 await channel.send(f"Terima kasih kepada {member_name} yang sudah menyelesaikan livestreamnya! Channel: {live_streams.get(member_name, 'N/A')}")
                 print(f"Notifikasi terkirim ke server atas nama {member_name}")
@@ -62,7 +64,7 @@ async def livestream_notification():
 
 # Fungsi untuk mengirimkan notifikasi ke channel Discord dengan embed
 async def send_livestream_notification(livestream):
-    channel_id = 1234567890  # Ganti dengan ID channel Discord Anda
+    channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
 
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
