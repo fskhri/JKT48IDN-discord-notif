@@ -44,7 +44,7 @@ async def check_finished_streams():
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    await bot.change_presence(activity=discord.Game(name="Watching JKT48 Livestreams"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="JKT48 Livestreams"))
     
     # Memulai pengecekan livestream selesai
     check_finished_streams.start()
