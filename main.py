@@ -7,6 +7,8 @@ from urllib.parse import quote
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
 
+CHANNEL_ID = 1234567890 # Change Your Id Channel
+
 # Fungsi untuk mengambil data dari API
 def get_livestream_data():
     api_url = 'https://mobile-api.idntimes.com/v3/livestreams'
@@ -24,6 +26,9 @@ last_messages = {}
 # Dictionary untuk menyimpan URL channel setiap anggota yang sedang livestream
 live_streams = {}
 
+# Dictionary untuk menyimpan statistik live stream
+live_stream_stats = {}
+
 # Pengecekan livestream selesai
 @tasks.loop(minutes=1)
 async def check_finished_streams():
@@ -33,16 +38,59 @@ async def check_finished_streams():
         for livestream in livestream_data['data']:
             if livestream['status'].lower() == 'ended':
                 member_name = livestream.get('creator', {}).get('name', 'Unknown')
-                channel_id = 1189628612278759586  # Ganti dengan ID channel Discord Anda
+                channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
                 channel = bot.get_channel(channel_id)
                 await channel.send(f"Terima kasih kepada {member_name} yang sudah menyelesaikan livestreamnya! Channel: {live_streams.get(member_name, 'N/A')}")
                 print(f"Notifikasi terkirim ke server atas nama {member_name}")
+
+                # Menghitung total jam live stream
+                start_time = livestream.get('started_at', 0)
+                end_time = livestream.get('ended_at', 0)
+                duration_hours = (end_time - start_time) / 3600  # Konversi dari detik ke jam
+
+                # Mengupdate atau menambahkan statistik ke dictionary live_stream_stats
+                if member_name in live_stream_stats:
+                    live_stream_stats[member_name]['total_hours'] += duration_hours
+                else:
+                    live_stream_stats[member_name] = {'total_hours': duration_hours, 'max_viewers': 0, 'total_gold': 0}
+
+                # Mengupdate jumlah pemirsa terbanyak
+                viewers = livestream.get('view_count', 0)
+                if viewers > live_stream_stats[member_name]['max_viewers']:
+                    live_stream_stats[member_name]['max_viewers'] = viewers
+
+                # Mengupdate jumlah gold yang diberikan
+                gold_given = livestream.get('gold_given', 0)
+                live_stream_stats[member_name]['total_gold'] += gold_given
+
+                await send_stats_notification(member_name)
+
+# Fungsi untuk mengirimkan notifikasi statistik live stream
+async def send_stats_notification(member_name):
+    channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
+
+    # Ambil data statistik dari dictionary live_stream_stats
+    stats = live_stream_stats.get(member_name, {})
+
+    # Buat objek embed
+    embed = discord.Embed(
+        title=f"Statistik Live Stream untuk {member_name}",
+        description=f"**Total Jam Live Stream:** {stats.get('total_hours', 0):.2f} jam\n"
+                    f"**Pemirsa Terbanyak:** {stats.get('max_viewers', 0)} orang\n"
+                    f"**Total Gold Diberikan:** {stats.get('total_gold', 0)} gold",
+        color=discord.Color.blue()  # Ganti warna sesuai keinginan
+    )
+
+    # Kirim embed ke channel Discord
+    channel = bot.get_channel(channel_id)
+    await channel.send(embed=embed)
+    print(f"Notifikasi statistik terkirim untuk {member_name}")
 
 # Fungsi yang dijalankan saat bot siap
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    await bot.change_presence(activity=discord.Game(name="Watching JKT48 Livestreams"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="JKT48 Livestreams"))
     
     # Memulai pengecekan livestream selesai
     check_finished_streams.start()
@@ -62,7 +110,7 @@ async def livestream_notification():
 
 # Fungsi untuk mengirimkan notifikasi ke channel Discord dengan embed
 async def send_livestream_notification(livestream):
-    channel_id = 1234567890  # Ganti dengan ID channel Discord Anda
+    channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
 
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
@@ -91,7 +139,6 @@ async def send_livestream_notification(livestream):
     # Tambahkan tombol untuk membuka channel
     channel_url = f"https://www.idn.app/{username.lower().replace(' ', '')}/live/{slug}"
     embed.add_field(name="Channel", value=f"[Buka Channel]({channel_url})", inline=True)
-
 
     # Tambahkan ikon hadiah (gift) jika tersedia
     if gift_icon_url:
