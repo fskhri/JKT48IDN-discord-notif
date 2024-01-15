@@ -64,7 +64,7 @@ async def livestream_notification():
 
 # Fungsi untuk mengirimkan notifikasi ke channel Discord dengan embed
 async def send_livestream_notification(livestream):
-    channel_id = CHANNEL_ID
+    channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
 
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
@@ -79,10 +79,13 @@ async def send_livestream_notification(livestream):
     category_name = livestream.get('category', {}).get('name', 'Unknown')
     slug = livestream.get('slug', '')  # Ganti dengan field yang sesuai
 
+    # Retrieve total gold from live_stream_stats
+    total_gold = live_stream_stats.get(creator_name, {}).get('total_gold', 0)
+
     # Buat objek embed
     embed = discord.Embed(
         title=title,
-        description=f"**Status:** {status}\n**Pemirsa:** {view_count}\n**Pembuat:** {creator_name}",
+        description=f"**Status:** {status}\n**Pemirsa 👥:** {view_count}\n**Pembuat:** {creator_name}",
         color=discord.Color.green()  # Ganti warna sesuai keinginan
     )
     embed.set_thumbnail(url=thumbnail_url)  # Set thumbnail menggunakan URL
@@ -94,7 +97,6 @@ async def send_livestream_notification(livestream):
     channel_url = f"https://www.idn.app/{username.lower().replace(' ', '')}/live/{slug}"
     embed.add_field(name="Channel", value=f"[Buka Channel]({channel_url})", inline=True)
 
-
     # Tambahkan ikon hadiah (gift) jika tersedia
     if gift_icon_url:
         embed.set_footer(text='Gift Icon')
@@ -102,6 +104,9 @@ async def send_livestream_notification(livestream):
 
     # Tambahkan kategori livestream
     embed.add_field(name="Kategori", value=category_name, inline=True)
+
+    # Tambahkan total gold
+    embed.add_field(name="Total Gold", value=total_gold, inline=True)
 
     # Kirim atau perbarui embed di channel Discord
     channel = bot.get_channel(channel_id)
