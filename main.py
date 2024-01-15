@@ -23,9 +23,6 @@ def get_livestream_data():
 # Dictionary untuk menyimpan pesan yang terakhir di-edit untuk setiap live stream
 last_messages = {}
 
-# Dictionary untuk menyimpan URL channel setiap anggota yang sedang livestream
-live_streams = {}
-
 # Pengecekan livestream selesai
 @tasks.loop(minutes=1)
 async def check_finished_streams():
@@ -69,15 +66,15 @@ async def send_livestream_notification(livestream):
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
     playback_url = livestream.get('playback_url', '')
-    thumbnail_url = livestream.get('image_url', '')  # Ganti dengan field yang sesuai, bisa 'image_url' atau 'thumbnail_url'
+    thumbnail_url = livestream.get('image_url', '')
     view_count = livestream.get('view_count', 0)
     status = livestream.get('status', 'Unknown')
     creator = livestream.get('creator', {})
     creator_name = creator.get('name', 'Unknown')
-    username = creator.get('username', 'Unknown')  # Tambahan untuk username
+    username = creator.get('username', 'Unknown')
     gift_icon_url = livestream.get('gift_icon_url', '')
     category_name = livestream.get('category', {}).get('name', 'Unknown')
-    slug = livestream.get('slug', '')  # Ganti dengan field yang sesuai
+    slug = livestream.get('slug', '')
 
     # Retrieve total gold from live_stream_stats
     total_gold = live_stream_stats.get(creator_name, {}).get('total_gold', 0)
@@ -88,7 +85,7 @@ async def send_livestream_notification(livestream):
         description=f"**Status:** {status}\n**Pemirsa 👥:** {view_count}\n**Pembuat:** {creator_name}",
         color=discord.Color.green()  # Ganti warna sesuai keinginan
     )
-    embed.set_thumbnail(url=thumbnail_url)  # Set thumbnail menggunakan URL
+    embed.set_thumbnail(url=thumbnail_url)
 
     # Tambahkan tombol untuk membuka playback dalam web player
     embed.add_field(name="Web Player", value=f"[Buka di Web Player]({playback_url})", inline=False)
