@@ -1,7 +1,7 @@
 # jkt48IDN-discord-notif
 Live notif IDN Live to Discord Channel
 
-### Importan
+### Important
 
 ```
 Fitur Ada yg ga work
