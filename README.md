@@ -1,6 +1,16 @@
 # jkt48IDN-discord-notif
 Live notif IDN Live to Discord Channel
 
+### Importan
+
+```
+Fitur Ada yg ga work
+
+1. livestream selesai
+2. Hitung gold, masih 0 di karenakan API nya tidak bisa menghitung gold
+
+```
+
 ### How To Install and Use
 
 ```
