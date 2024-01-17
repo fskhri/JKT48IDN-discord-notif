@@ -6,7 +6,7 @@ import time
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
 
-CHANNEL_ID = 1234567890
+CHANNEL_ID = 1234567890 # Ganti dengan ID channel Discord Anda
 
 # Fungsi untuk mengambil data dari API
 def get_livestream_data():
