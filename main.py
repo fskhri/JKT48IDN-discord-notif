@@ -114,6 +114,7 @@ async def send_livestream_notification(livestream):
     gift_icon_url = livestream.get('gift_icon_url', '')
     category_name = livestream.get('category', {}).get('name', 'Unknown')
     slug = livestream.get('slug', '')  # Ganti dengan field yang sesuai
+    greeting = get_greeting(live_at) # Memberi salam otomatis
 
     # Retrieve total gold from live_stream_stats
     total_gold = live_stream_stats.get(creator_name, {}).get('total_gold', 0)
@@ -121,7 +122,9 @@ async def send_livestream_notification(livestream):
     # Buat objek embed
     embed = discord.Embed(
         title=title,
-        description=f"**Status:** {status}\n**Pemirsa 👥:** {view_count}\n**Pembuat:** {creator_name}",
+        description=f"{greeting}, si {creator_name} lagi live nih! Nonton yuk! 🎥\n"
+                    f"**Pemirsa 👥:** {view_count}\n"
+                    f"**Pembuat:** {creator_name}",
         color=random_color  # Ganti warna otomatis
     )
     embed.set_thumbnail(url=thumbnail_url)  # Set thumbnail menggunakan URL
@@ -156,6 +159,23 @@ async def send_livestream_notification(livestream):
     sent_message = await channel.send(embed=embed)
     last_messages[livestream['room_identifier']] = sent_message.id
     print(f"Notifikasi terkirim, Member yang sedang stream: {creator_name}")
+
+def get_greeting(live_at):
+    now = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+
+    # Parse the live_at string to a datetime object
+    live_time = datetime.datetime.fromisoformat(live_at.replace('Z', '+00:00'))
+
+    if 6 <= now.hour < 12:
+        return "Selamat pagi"
+    elif 12 <= now.hour < 15:
+        return "Selamat siang"
+    elif 15 <= now.hour < 18:
+        return "Selamat sore"
+    elif 18 <= now.hour < 24:
+        return "Selamat malam"
+    else:
+        return "Selamat malam"
 
 # Menjalankan bot
 if __name__ == '__main__':
