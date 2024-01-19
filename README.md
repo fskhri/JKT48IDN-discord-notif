@@ -14,6 +14,7 @@ Fitur Ada yg ga work
 ### Changelog (1.1)
 ~~~
 1. Random Color Embed
+2. Menentukan salam berdasarkan waktu (contoh nya ada di gambar bawah)
 ~~~
 
 ### How To Install and Use
