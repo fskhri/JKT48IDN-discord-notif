@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 import requests
+import datetime
 import time
 import random
 
@@ -161,18 +162,20 @@ async def send_livestream_notification(livestream):
     print(f"Notifikasi terkirim, Member yang sedang stream: {creator_name}")
 
 def get_greeting(live_at):
-    now = datetime.datetime.now(pytz.timezone('Asia/Jakarta'))
+    now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7)))
 
-    # Parse the live_at string to a datetime object
-    live_time = datetime.datetime.fromisoformat(live_at.replace('Z', '+00:00'))
+    # Convert epoch timestamp to datetime object
+    live_time = datetime.datetime.utcfromtimestamp(int(live_at))
+    live_time = live_time.replace(tzinfo=datetime.timezone.utc)
+    live_time = live_time.astimezone(datetime.timezone(datetime.timedelta(hours=7)))
 
     if 6 <= now.hour < 12:
         return "Selamat pagi"
     elif 12 <= now.hour < 15:
         return "Selamat siang"
-    elif 15 <= now.hour < 18:
+    elif 15 <= now.hour < 20:
         return "Selamat sore"
-    elif 18 <= now.hour < 24:
+    elif 20 <= now.hour < 24:
         return "Selamat malam"
     else:
         return "Selamat malam"
