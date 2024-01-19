@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import requests
 import time
+import random
 
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
@@ -99,6 +100,8 @@ async def livestream_notification():
 async def send_livestream_notification(livestream):
     channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
 
+    random_color = discord.Color(random.randint(0, 0xFFFFFF)) # Random Color For Embed
+
     # Proses data sesuai kebutuhan
     title = livestream.get('title', 'No Title')
     playback_url = livestream.get('playback_url', '')
@@ -119,7 +122,7 @@ async def send_livestream_notification(livestream):
     embed = discord.Embed(
         title=title,
         description=f"**Status:** {status}\n**Pemirsa 👥:** {view_count}\n**Pembuat:** {creator_name}",
-        color=discord.Color.green()  # Ganti warna sesuai keinginan
+        color=random_color  # Ganti warna otomatis
     )
     embed.set_thumbnail(url=thumbnail_url)  # Set thumbnail menggunakan URL
 
@@ -141,7 +144,7 @@ async def send_livestream_notification(livestream):
     # Tambahkan total gold
     embed.add_field(name="Total Gold", value=total_gold, inline=True)
 
-    # Kirim atau perbarui embed di channel Discord
+    # Kirim atau perbarui embed di  Discord
     channel = bot.get_channel(channel_id)
 
     if livestream['room_identifier'] in last_messages:
