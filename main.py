@@ -1,14 +1,14 @@
 import discord
 from discord.ext import commands, tasks
 import requests
-import datetime
 import time
+import datetime
 import random
+
+channel_name = 'IDN NOTIFER' # Ganti ini dengan room discord kamu
 
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
-
-CHANNEL_ID = 1234567890 # Ganti dengan ID channel Discord Anda
 
 # Fungsi untuk mengambil data dari API
 def get_livestream_data():
@@ -34,12 +34,11 @@ async def check_finished_streams():
     livestream_data = get_livestream_data()
 
     if 'data' in livestream_data and len(livestream_data['data']) > 0:
-        print("Livestream data available. Checking for ended streams...")
         for livestream in livestream_data['data']:
             if livestream['status'].lower() == 'ended':
                 print(f"Detected ended livestream: {livestream}")
                 member_name = livestream.get('creator', {}).get('name', 'Unknown')
-                channel_id = CHANNEL_ID
+                channel_id = channel_name
                 channel = bot.get_channel(channel_id)
 
                 # Menghitung total jam live stream
@@ -99,7 +98,7 @@ async def livestream_notification():
 
 # Fungsi untuk mengirimkan notifikasi ke channel Discord dengan embed
 async def send_livestream_notification(livestream):
-    channel_id = CHANNEL_ID  # Ganti dengan ID channel Discord Anda
+    channel_name = channel_name  # Ganti dengan ID channel Discord Anda
 
     random_color = discord.Color(random.randint(0, 0xFFFFFF)) # Random Color For Embed
 
@@ -115,7 +114,8 @@ async def send_livestream_notification(livestream):
     gift_icon_url = livestream.get('gift_icon_url', '')
     category_name = livestream.get('category', {}).get('name', 'Unknown')
     slug = livestream.get('slug', '')  # Ganti dengan field yang sesuai
-    greeting = get_greeting(live_at) # Memberi salam otomatis
+    live_at = livestream.get('live_at', '')
+    greeting = get_greeting(live_at)
 
     # Retrieve total gold from live_stream_stats
     total_gold = live_stream_stats.get(creator_name, {}).get('total_gold', 0)
@@ -126,7 +126,7 @@ async def send_livestream_notification(livestream):
         description=f"{greeting}, si {creator_name} lagi live nih! Nonton yuk! 🎥\n"
                     f"**Pemirsa 👥:** {view_count}\n"
                     f"**Pembuat:** {creator_name}",
-        color=random_color  # Ganti warna otomatis
+        color=random_color  # Ganti warna sesuai keinginan
     )
     embed.set_thumbnail(url=thumbnail_url)  # Set thumbnail menggunakan URL
 
@@ -148,8 +148,8 @@ async def send_livestream_notification(livestream):
     # Tambahkan total gold
     embed.add_field(name="Total Gold", value=total_gold, inline=True)
 
-    # Kirim atau perbarui embed di  Discord
-    channel = bot.get_channel(channel_id)
+    # Kirim atau perbarui embed di channel Discord
+    channel = bot.get_channel(channel_name)
 
     if livestream['room_identifier'] in last_messages:
         # Jika pesan sudah ada, hapus pesan terakhir
