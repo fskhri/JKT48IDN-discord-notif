@@ -5,7 +5,7 @@ import time
 import datetime
 import random
 
-channel_name = 'IDN NOTIFER' # Ganti ini dengan room discord kamu
+channel_name = 'idn-notifer' # Ganti ini dengan room channel discord kamu
 
 # Inisialisasi bot
 bot = commands.Bot(command_prefix='!')
