@@ -8,7 +8,6 @@ Fitur Ada, tapi ga work
 
 1. livestream selesai
 2. Hitung gold, masih 0 di karenakan API nya tidak bisa menghitung gold
-
 ```
 
 ### Changelog (1.1)
@@ -28,7 +27,6 @@ $ python3 main.py (For windows: python main.py)
 ```
 BOT_TOKEN= Your Token Bot
 channel_id= Your Name Room
-
 ```
 
 Example:
