@@ -27,7 +27,7 @@ $ python3 main.py (For windows: python main.py)
 ## Environtment Variables
 ```
 BOT_TOKEN= Your Token Bot
-channel_id= Your Channel
+channel_id= Your Name Room
 ```
 
 ## Preview
