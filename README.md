@@ -29,11 +29,11 @@ $ python3 main.py (For windows: python main.py)
 BOT_TOKEN= Your Token Bot
 channel_id= Your Name Room
 
+```
+
 Example:
 
 ![image](https://github.com/fskhri/JKT48IDN-discord-notif/assets/41115223/9598bae0-bcfa-4c23-be15-48fe6a6fef8d)
-
-```
 
 ## Preview
 ![alt text](https://cdn.discordapp.com/attachments/1189628612278759586/1195303172248445020/image.png?ex=65b37fd3&is=65a10ad3&hm=cff9f99f08718bf188bffdbb793bbf5d44fa57dd70c362097de426aadc5cf577&)
